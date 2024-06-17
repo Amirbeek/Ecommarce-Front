@@ -4,19 +4,12 @@ import { useSession } from 'next-auth/react';
 export default function Home() {
     const { data: session, status } = useSession();
 
-    if (status === 'loading') {
-        return <div>Loading...</div>;
-    }
-
-    if (!session) {
-        return <div>You are not logged in.</div>;
-    }
 
     return (
         <Layout>
             <div className={'text-blue-900 flex justify-between'}>
                 <h2>
-                    Hello, <b>{session.user?.name}</b>
+                    Hello, <b>{session?.user?.name}</b>
                 </h2>
                 <div className={'flex  bg-gray-300 text-black gap-1 rounded-lg overflow-hidden'}>
                     <img src={session?.user?.image}  className={'w-6 h-6'}/>

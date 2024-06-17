@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import ProductForm from '../../components/ProductForm'; // Adjust the import path as needed
+import Layout from '../../components/Layout'; // Adjust the import path as needed
 
 export default function EditProduct() {
     const [productInfo, setProductInfo] = useState({});
@@ -13,8 +14,8 @@ export default function EditProduct() {
             console.log("No id found in router query");
             return;
         }
-        const id = editProject[0]; // Get the id from the editProject array
-
+        const id = editProject[0];
+        console.log(id)
         axios.get('/api/products?id=' + id)
             .then(response => {
                 setProductInfo(response.data);
@@ -24,5 +25,10 @@ export default function EditProduct() {
             });
     }, [editProject]);
 
-    return <ProductForm {...productInfo} />;
+    return (
+        <Layout>
+            <h1 className=" mb-2 text-xl">Edit Product</h1>
+            {productInfo && <ProductForm {...productInfo} />}
+        </Layout>
+    );
 }
