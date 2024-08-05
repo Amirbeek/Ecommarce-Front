@@ -3,6 +3,14 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { withSwal } from 'react-sweetalert2';
 
+// Define the Loading component
+const Loading = () => (
+    <div className="loading-container text-center">
+        <div className="loading-spinner"></div>
+        <div>Loading...</div>
+    </div>
+);
+
 function Categories({ swal }) {
     const [name, setName] = useState('');
     const [categories, setCategories] = useState([]);
@@ -11,19 +19,23 @@ function Categories({ swal }) {
     const [editedCategory, setEditedCategory] = useState(null);
     const [properties, setProperties] = useState([]);
     const [isEditingProperties, setIsEditingProperties] = useState(false);
+    const [loading, setLoading] = useState(true); // State to manage loading indicator
 
     useEffect(() => {
         fetchCategories();
     }, []);
 
     function fetchCategories() {
+        setLoading(true); // Start loading indicator
         axios.get('/api/categories')
             .then(result => {
                 setCategories(result.data);
+                setLoading(false); // Turn off loading indicator once data is fetched
             })
             .catch(error => {
                 console.error('Error fetching categories:', error);
                 setError('Error fetching categories');
+                setLoading(false); // Make sure to turn off loading in case of error
             });
     }
 
@@ -90,6 +102,7 @@ function Categories({ swal }) {
                     await axios.delete('/api/categories?_id=' + _id);
                     fetchCategories();
                     swal.fire('Deleted!', 'Your category has been deleted.', 'success');
+
                 } catch (error) {
                     console.error('Error deleting category:', error);
                     setError('Error deleting category');
@@ -201,6 +214,7 @@ function Categories({ swal }) {
                     <button type="submit" className="btn-primary py-1">Save</button>
                 </div>
             </form>
+
             {!properties.length && !editedCategory && (
                 <>
                     <table className="basic mt-3">
@@ -212,17 +226,24 @@ function Categories({ swal }) {
                         </tr>
                         </thead>
                         <tbody>
-                        {categories.length > 0 && categories.map((category) => (
-                            <tr key={category._id}>
-                                <td>{category.name}</td>
-                                <td>{category?.parent?.name || ''}</td>
-                                <td>
-                                    <button onClick={() => editCategory(category)} className=' btn-default  mr-1'>Edit</button>
-                                    <button onClick={() => deleteCategory(category)} className=' btn-red' >
-                                        Delete</button>
-                                </td>
+                        {loading ? (
+                            <tr>
+                                <td colSpan="3"><Loading /></td>
                             </tr>
-                        ))}
+                        ) : (
+                            categories.length > 0 && categories.map((category) => (
+                                <tr key={category._id}>
+                                    <td>{category.name}</td>
+                                    <td>{category?.parent?.name || ''}</td>
+                                    <td>
+                                        <button onClick={() => editCategory(category)} className=' btn-default  mr-1'>Edit</button>
+                                        <button onClick={() => deleteCategory(category)} className=' btn-red' >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                         </tbody>
                     </table>
                 </>

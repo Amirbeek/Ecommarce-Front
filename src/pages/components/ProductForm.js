@@ -82,6 +82,7 @@ export default function ProductForm({
             for (const file of files) {
                 data.append('file', file);
             }
+
             try {
                 const res = await axios.post('/api/upload', data);
                 setImages(oldImages => [...oldImages, ...res.data.links]);
@@ -173,7 +174,7 @@ export default function ProductForm({
                 value={description}
                 onChange={handleDescriptionChange}
             />
-            <label htmlFor="price">Product Price (in GPA)</label>
+            <label htmlFor="price">Product Price (in GBP)</label>
             <input
                 type="number"
                 id="price"
