@@ -19,6 +19,9 @@
 h1{
   @apply text-gray-800 mb-4 text-xl;
 }
+h2{
+  @apply text-gray-800  mb-2 text-lg mt-6
+}
 input, textarea, select {
   @apply border border-gray-200 rounded-sm p-2  w-full;
   @apply mb-2;

@@ -2,7 +2,12 @@ import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 import clientPromise from '../../../../lib/mongodb';
+import { Admin } from "../../../../models/Admin";
 import { getServerSession } from 'next-auth';
+
+async function isAdminEmail(email) {
+    return !!(await Admin.findOne({ email }));
+}
 
 export const authOptions = {
     providers: [
@@ -13,12 +18,13 @@ export const authOptions = {
     ],
     adapter: MongoDBAdapter(clientPromise),
     callbacks: {
-        async session({ session, token, user }) {
-            console.log('Session:', session);
-            console.log('Token:', token);
-            console.log('User:', user);
-
-            // Temporarily allow everyone
+        async session({ session }) {
+            if (session?.user?.email) {
+                const isAdmin = await isAdminEmail(session.user.email);
+                session.isAdmin = isAdmin;
+            } else {
+                session.isAdmin = false;
+            }
             return session;
         },
     },
@@ -27,26 +33,13 @@ export const authOptions = {
 export default NextAuth(authOptions);
 
 export async function isAdminRequest(req, res) {
-    const session = await getServerSession(req, res, authOptions);
-
-    // Temporarily allow everyone
-    if (!session) {
-        res.status(401);
-        res.end();
-        throw new Error('Not authenticated');
+    try {
+        const session = await getServerSession(req, res, authOptions);
+        if (!session || !session.isAdmin) {
+            res.status(403).json({ error: 'Access denied' });
+            return;
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
     }
-
-    // If you still want to throw an error for not authenticated users
-    // if (!session) {
-    //     res.status(401);
-    //     res.end();
-    //     throw new Error('Not authenticated');
-    // }
-
-    // Remove the admin email check for now
-    // if (!adminEmails.includes(session?.user?.email)) {
-    //     res.status(401);
-    //     res.end();
-    //     throw new Error('Not admin');
-    // }
 }
