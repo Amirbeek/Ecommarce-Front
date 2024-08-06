@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import Spinner from "./spinner";
+import Spinner from "./Spinner";
 import { ReactSortable } from "react-sortablejs";
 
 export default function ProductForm({
@@ -23,10 +23,14 @@ export default function ProductForm({
     const [selectedCategory, setSelectedCategory] = useState(existingCategory || '');
     const [productProperties, setProductProperties] = useState(assignedProperties || {});
     const router = useRouter();
+    const [categoryLoading ,setCategoryLoading] =useState(false);
 
     useEffect(() => {
+        setCategoryLoading(true);
         axios.get('/api/categories').then(result => {
             setCategories(result.data);
+            setCategoryLoading(false);
+
         }).catch(error => {
             console.error('Error fetching categories:', error);
         });
@@ -133,6 +137,9 @@ export default function ProductForm({
                     <option key={c._id} value={c._id}>{c.name}</option>
                 ))}
             </select>
+            {categoryLoading && (
+                <Spinner/>
+            )}
             {propertiesFill.length > 0 && propertiesFill.map((p, index) => (
                 <div className={'1'} key={index}>
                     <label>{p.name[0].toUpperCase()+p.name.substring(1)}</label>

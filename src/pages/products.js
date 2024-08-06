@@ -2,16 +2,18 @@ import Layout from './components/Layout';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Spinner from "@/pages/components/Spinner";
 
 export default function Products() {
     const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true); // State to manage loading indicator
+    const [loading, setLoading] = useState(false); // State to manage loading indicator
 
     useEffect(() => {
+        setLoading(true);
         axios.get('/api/products')
             .then(response => {
                 setProducts(response.data);
-                setLoading(false); // Turn off loading indicator once data is fetched
+                setLoading(false);
             })
             .catch(error => {
                 console.error('Error fetching products:', error);
@@ -20,16 +22,7 @@ export default function Products() {
     }, []);
 
     // Loading component to display while fetching data
-    const Loading = () => (
-        <tr>
-            <td colSpan="2" className="text-center">
-                <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <div>Loading...</div>
-                </div>
-            </td>
-        </tr>
-    );
+
 
     return (
         <Layout>
@@ -46,7 +39,13 @@ export default function Products() {
                 </thead>
                 <tbody>
                 {loading ? (
-                    <Loading /> // Display loading indicator while fetching data
+                  <tr>
+                      <td colSpan={2} className={'p-2'}>
+                          <div class="py-4">
+                              <Spinner fullWidth={true}/>
+                          </div>
+                      </td>
+                  </tr>
                 ) : (
                     products.map(product => (
                         <tr key={product._id}>

@@ -2,6 +2,7 @@ import Layout from '../../src/pages/components/Layout';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { withSwal } from 'react-sweetalert2';
+import Spinner from "@/pages/components/Spinner";
 
 // Define the Loading component
 const Loading = () => (
@@ -228,7 +229,13 @@ function Categories({ swal }) {
                         <tbody>
                         {loading ? (
                             <tr>
-                                <td colSpan="3"><Loading /></td>
+                                <td colSpan={3}>
+                                    <div className="py-4">
+                                        <Spinner fullWidth={true}/>
+                                    </div>
+                                </td>
+
+
                             </tr>
                         ) : (
                             categories.length > 0 && categories.map((category) => (

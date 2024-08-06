@@ -7,7 +7,7 @@ export default async function handle(req, res) {
     const { method } = req;
     await mongooseConnect();
     try {
-        await isAdminRequest(req, res); // Ensuring admin check
+        await isAdminRequest(req, res);
     } catch (error) {
         console.error('Admin check failed:', error);
         return res.status(401).json({ error: 'Not admin' });
