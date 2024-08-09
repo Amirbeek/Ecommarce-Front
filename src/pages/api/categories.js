@@ -5,6 +5,8 @@ import { getServerSession } from "next-auth";
 
 export default async function handle(req, res) {
     await mongooseConnect();
+    await isAdminRequest(req,res);
+
     try {
         await isAdminRequest(req, res); // Ensuring admin check
     } catch (error) {

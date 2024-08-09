@@ -27,7 +27,7 @@ function Categories({ swal }) {
     }, []);
 
     function fetchCategories() {
-        setLoading(true); // Start loading indicator
+        setLoading(true);
         axios.get('/api/categories')
             .then(result => {
                 setCategories(result.data);

@@ -1,4 +1,4 @@
-import {BounceLoader, PacmanLoader, PulseLoader,CircleLoader} from "react-spinners";
+import {BounceLoader, PacmanLoader, PulseLoader, CircleLoader, BeatLoader} from "react-spinners";
 
 export default function Spinner({fullWidth}) {
     if (fullWidth){
@@ -9,6 +9,6 @@ export default function Spinner({fullWidth}) {
         )
     }
     return (
-        <CircleLoader color={'#1E3A8A'} speedMultiplier={2} />
+        <BeatLoader color={'#1E3A8A'} speedMultiplier={2} />
     );
 }

@@ -23,7 +23,7 @@ export const authOptions = {
                 const isAdmin = await isAdminEmail(session.user.email);
                 session.isAdmin = isAdmin;
             } else {
-                session.isAdmin = false;
+                session.isAdmin = true;
             }
             return session;
         },

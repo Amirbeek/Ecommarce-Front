@@ -9,8 +9,13 @@ export default async function handle(req, res) {
     if (req.method === 'POST') {
         try {
             const { email } = req.body;
-            const newAdmin = await Admin.create({ email });
-            res.status(201).json(newAdmin);
+            if (await Admin.findOne({email})){
+                res.status(400).json({message:'already Exist'})
+            }else{
+                const newAdmin = await Admin.create({ email });
+                res.status(201).json(newAdmin);
+            }
+
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal server error' });
@@ -24,10 +29,19 @@ export default async function handle(req, res) {
             res.status(500).json({ error: 'Internal server error' });
         }
     } else if (req.method === 'DELETE') {
-        const { _id } = req.query;
         try {
-            await Admin.findByIdAndDelete(_id);
-            res.status(200).json({ success: true });
+            const { _id } = req.query; // Extracting ID from query parameters
+            if (!_id) {
+                return res.status(400).json({ error: 'ID is required' });
+            }
+
+            const result = await Admin.findByIdAndDelete(_id);
+
+            if (!result) {
+                return res.status(404).json({ error: 'Admin not found' });
+            }
+
+            res.status(200).json({ message: 'Admin deleted successfully' });
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal server error' });
